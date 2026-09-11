@@ -1,50 +1,66 @@
 # 🛡️ VanguardRAG — Local Autonomous RAG Pipeline
 
-> **VanguardRAG** — это защищенная локальная система поиска и генерации данных (Retrieval-Augmented Generation), развернутая на базе связки **FastAPI, Qdrant, Ollama (Llama 3.2)** и интерактивного **Streamlit**-интерфейса. Полностью автономное решение без утечки данных во внешние облачные API.
+> **VanguardRAG** is a secure, fully local Retrieval-Augmented Generation system built with **FastAPI, Qdrant, Ollama (Llama 3.2)**, and an interactive **Streamlit** frontend. It ensures absolute data privacy with zero external cloud API dependencies.
 
 ---
 
-## 🏗️ Архитектура и стек технологий
+##  Architecture & Tech Stack
 
-Проект полностью упакован в **Docker Compose** и состоит из 4 изолированных сервисов:
+The project runs on **Docker Compose** and consists of 4 isolated microservices:
 
-* **Frontend**: `Streamlit` (красивый асинхронный UI с виджетами, панелью загрузки документов и историей чата).
-* **Backend API**: `FastAPI` (обработка файлов, чанкинг, оркестрация запросов к базе векторов и LLM).
-* **Vector Database**: `Qdrant` (быстрый поиск релевантных фрагментов по эмбеддингам).
-* **Local LLM & Embeddings**: `Ollama` (модели `llama3.2` для генерации текста и `nomic-embed-text` для векторизации).
+* **Frontend**: `Streamlit` (interactive dashboard with document upload, session history, and UI controls).
+* **Backend API**: `FastAPI` (REST endpoints, document chunking, orchestration between the vector DB and LLM).
+* **Vector Database**: `Qdrant` (high-performance semantic similarity search).
+* **Local LLM & Embeddings**: `Ollama` running `llama3.2` for text generation and `nomic-embed-text` for vectorization.
 
 ---
 
-## 🚀 Быстрый старт (Запуск за 1 минуту)
+##  Quick Start
 
-### Требования
-* Установленный [Docker Desktop](https://www.docker.com/)
-* Установленный Git
+### Prerequisites
+* [Docker Desktop](https://www.docker.com/) installed and running.
+* Git installed.
 
-### Инструкция по запуску:
-1. Клонируйте репозиторий:
+### Setup Instructions
+
+1. Clone the repository:
    ```bash
    git clone [https://github.com/cha1btw/VanguardRAG.git](https://github.com/cha1btw/VanguardRAG.git)
    cd VanguardRAG
 
-	1.	Запустите всю инфраструктуру одной командой:
-    docker compose up --build -d
+
+---
+
+1.	Spin up the entire infrastructure:
+
+docker compose up --build -d
 
 
-2.	Откройте интерфейс в браузере:
-⚬	Streamlit UI: http://localhost:8501
-⚬	FastAPI Docs (Swagger): http://localhost:8000/docs
-💡 Основные возможности
-⚬	📂 Мультиформатная загрузка: Поддержка файлов .txt, .pdf и .docx с автоматическим сплиттингом на чанки.
-⚬	⚡ Локальная инференс-генерация: Полная приватность данных благодаря локальному запуску через Ollama.
-⚬	🎯 Гибкий контекст: Настройка параметра top_k прямо из боковой панели интерфейса для управления глубиной поиска.
-⚬	📚 Прослеживаемость ответов: Каждое сообщение модели сопровождается списком использованных источников (название документа и индекс чанка).
 
-🛠️ Структура репозитория
+---
+
+2.	Open the apps in your browser:
+
+⚬	Streamlit Frontend UI: http://localhost:8501
+⚬	FastAPI Swagger Docs: http://localhost:8000/docs
+
+---
+
+ Key Features
+
+⚬	 Multi-Format Ingestion: Supports .txt, .pdf, and .docx document parsing with automated text chunking.
+⚬	 100% Local Inference: Complete data privacy via local model execution using Ollama.
+⚬	 Dynamic Context Control: Adjust the top_k chunk retrieval parameter directly from the sidebar UI.
+⚬	 Source Citations: Every generated response includes reference links to the source document and chunk index.
+
+----
+
+
+Repository Structure
 
 VanguardRAG/
-├── app/                  # FastAPI бэкенд (роутеры, сервисы, схемы)
-├── frontend/             # Streamlit приложение (дизайн, логика UI, Dockerfile)
-├── storage/              # Локальные данные (Qdrant & Ollama volumes - в .gitignore)
-├── docker-compose.yml    # Оркестрация контейнеров
-└── requirements.txt      # Зависимости бэкенда
+├── app/                  # FastAPI backend (routers, services, schemas)
+├── frontend/             # Streamlit application (UI logic, Dockerfile)
+├── storage/              # Local data volumes for Qdrant & Ollama (git-ignored)
+├── docker-compose.yml    # Multi-container orchestration config
+└── requirements.txt      # Python dependencies
