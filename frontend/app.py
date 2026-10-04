@@ -1,3 +1,5 @@
+import time
+
 import requests
 import streamlit as st
 
@@ -185,13 +187,16 @@ if prompt := (
         ):
             try:
                 payload = {"query": prompt, "top_k": top_k}
+                started_at = time.perf_counter()
                 response = requests.post(f"{API_URL}/generate", json=payload)
+                elapsed_seconds = time.perf_counter() - started_at
 
                 if response.status_code == 200:
                     res_data = response.json()
                     answer = res_data.get("answer", "No answer provided")
                     citations = res_data.get("citations", [])
 
+                    st.caption(f"Generated in {elapsed_seconds:.1f} seconds")
                     full_response = f"{answer}\n\n---\n**📚 Sources Used:**\n"
                     if citations:
                         for cit in citations:
