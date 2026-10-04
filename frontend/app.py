@@ -159,6 +159,18 @@ for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
+chat_export = "\n\n".join(
+    f"## {message['role'].capitalize()}\n\n{message['content']}"
+    for message in st.session_state.messages
+)
+st.download_button(
+    "Download conversation",
+    data=chat_export,
+    file_name="vanguardrag-chat.md",
+    mime="text/markdown",
+    disabled=not st.session_state.messages,
+)
+
 if prompt := (
     st.chat_input("Type your question about the documents...")
     or selected_prompt
