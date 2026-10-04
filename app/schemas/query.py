@@ -10,6 +10,7 @@ QueryText = Annotated[
 class SearchQuery(BaseModel):
     query: QueryText = Field(..., description="Поисковый запрос")
     top_k: int = Field(default=5, ge=1, le=20, description="Количество чанков")
+    score_threshold: float | None = Field(default=None, ge=0.0, le=1.0)
 
 
 class SearchResultItem(BaseModel):
@@ -34,6 +35,7 @@ class Citation(BaseModel):
 class RAGQuery(BaseModel):
     query: QueryText = Field(..., description="Вопрос пользователя")
     top_k: int = Field(default=3, ge=1, le=10)
+    score_threshold: float | None = Field(default=None, ge=0.0, le=1.0)
 
 
 class RAGResponse(BaseModel):

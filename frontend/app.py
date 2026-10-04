@@ -133,6 +133,14 @@ with st.sidebar:
         value=3,
         help="Number of relevant document fragments passed to the LLM.",
     )
+    minimum_score = st.slider(
+        "Minimum Relevance",
+        min_value=0.0,
+        max_value=1.0,
+        value=0.0,
+        step=0.05,
+        help="Filter out document fragments below this similarity score.",
+    )
 
     st.divider()
     if st.button("🗑️ Clear Chat History", use_container_width=True):
@@ -217,7 +225,11 @@ if prompt := (
             "🔍 Searching documents and generating response..."
         ):
             try:
-                payload = {"query": prompt, "top_k": top_k}
+                payload = {
+                    "query": prompt,
+                    "top_k": top_k,
+                    "score_threshold": minimum_score or None,
+                }
                 started_at = time.perf_counter()
                 response = requests.post(
                     f"{API_URL}/generate",

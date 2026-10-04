@@ -10,7 +10,9 @@ router = APIRouter()
 async def search_documents(payload: SearchQuery):
     query_vector = await embedder_service.embed_query(payload.query)
     search_results = await qdrant_service.search_similar(
-        query_vector=query_vector, limit=payload.top_k
+        query_vector=query_vector,
+        limit=payload.top_k,
+        score_threshold=payload.score_threshold,
     )
 
     results = [

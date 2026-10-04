@@ -83,13 +83,17 @@ class QdrantService:
         )
 
     async def search_similar(
-        self, query_vector: List[float], limit: int = 5
+        self,
+        query_vector: List[float],
+        limit: int = 5,
+        score_threshold: float | None = None,
     ) -> List[models.ScoredPoint]:
         """Поиск наиболее похожих векторов в Qdrant."""
         response = await self.client.query_points(
             collection_name=self.collection_name,
             query=query_vector,
             limit=limit,
+            score_threshold=score_threshold,
         )
         return response.points
 
