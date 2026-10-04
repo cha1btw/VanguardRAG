@@ -1,10 +1,15 @@
+import os
 import time
 
 import requests
 import streamlit as st
 
-API_BASE_URL = "http://api:8000"
-API_URL = f"{API_BASE_URL}/api/v1/documents"
+API_URL = os.getenv(
+    "API_URL", "http://api:8000/api/v1/documents"
+).rstrip("/")
+API_BASE_URL = os.getenv(
+    "API_BASE_URL", API_URL.split("/api/v1/")[0]
+).rstrip("/")
 
 st.set_page_config(
     page_title="VanguardRAG — Local AI Assistant",
