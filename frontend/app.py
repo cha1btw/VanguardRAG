@@ -3,7 +3,8 @@ import time
 import requests
 import streamlit as st
 
-API_URL = "http://api:8000/api/v1/documents"
+API_BASE_URL = "http://api:8000"
+API_URL = f"{API_BASE_URL}/api/v1/documents"
 
 st.set_page_config(
     page_title="VanguardRAG — Local AI Assistant",
@@ -92,6 +93,19 @@ with st.sidebar:
                         st.error(f"Error: {response.text}")
                 except Exception as e:
                     st.error(f"Backend connection failed: {e}")
+
+    st.divider()
+    if st.button("Check API connection", use_container_width=True):
+        try:
+            health_response = requests.get(
+                f"{API_BASE_URL}/health", timeout=5
+            )
+            if health_response.ok:
+                st.success("API is online")
+            else:
+                st.error(f"API returned status {health_response.status_code}")
+        except requests.RequestException as error:
+            st.error(f"API connection failed: {error}")
 
     st.divider()
     st.subheader("⚙️ Step 2: Search Settings")
