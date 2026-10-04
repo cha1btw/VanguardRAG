@@ -11,6 +11,7 @@ API_BASE_URL = os.getenv(
     "API_BASE_URL", API_URL.split("/api/v1/")[0]
 ).rstrip("/")
 API_REQUEST_TIMEOUT = (5, 300)
+MAX_UPLOAD_SIZE_BYTES = 10 * 1024 * 1024
 
 st.set_page_config(
     page_title="VanguardRAG — Local AI Assistant",
@@ -76,8 +77,14 @@ with st.sidebar:
         st.caption(
             f"{uploaded_file.name} · {uploaded_file.size / 1024:.1f} KB"
         )
+        upload_too_large = uploaded_file.size > MAX_UPLOAD_SIZE_BYTES
+        if upload_too_large:
+            st.error("Files must be 10 MiB or smaller.")
         if st.button(
-            "🚀 Ingest Document", type="primary", use_container_width=True
+            "🚀 Ingest Document",
+            type="primary",
+            use_container_width=True,
+            disabled=upload_too_large,
         ):
             with st.spinner("Reading, chunking, and vectorizing..."):
                 files = {
