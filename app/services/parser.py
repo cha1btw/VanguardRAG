@@ -1,7 +1,11 @@
 import io
+from zipfile import BadZipFile
+
 import docx
+from docx.opc.exceptions import PackageNotFoundError
 from fastapi import UploadFile, HTTPException
 from pypdf import PdfReader
+from pypdf.errors import PdfReadError
 
 MAX_UPLOAD_SIZE_BYTES = 10 * 1024 * 1024
 
@@ -22,18 +26,30 @@ class DocumentParserService:
 
         elif filename.endswith(".pdf"):
             pdf_stream = io.BytesIO(contents)
-            reader = PdfReader(pdf_stream)
-            text = []
-            for page in reader.pages:
-                extracted = page.extract_text()
-                if extracted:
-                    text.append(extracted)
-            return "\n".join(text)
+            try:
+                reader = PdfReader(pdf_stream)
+                text = []
+                for page in reader.pages:
+                    extracted = page.extract_text()
+                    if extracted:
+                        text.append(extracted)
+                return "\n".join(text)
+            except PdfReadError as error:
+                raise HTTPException(
+                    status_code=400, detail="Unable to read this PDF file"
+                ) from error
 
         elif filename.endswith(".docx"):
             docx_stream = io.BytesIO(contents)
-            doc = docx.Document(docx_stream)
-            return "\n".join([p.text for p in doc.paragraphs if p.text.strip()])
+            try:
+                doc = docx.Document(docx_stream)
+                return "\n".join(
+                    [p.text for p in doc.paragraphs if p.text.strip()]
+                )
+            except (BadZipFile, PackageNotFoundError) as error:
+                raise HTTPException(
+                    status_code=400, detail="Unable to read this DOCX file"
+                ) from error
 
         else:
             raise HTTPException(
