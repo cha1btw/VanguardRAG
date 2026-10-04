@@ -3,12 +3,19 @@ import docx
 from fastapi import UploadFile, HTTPException
 from pypdf import PdfReader
 
+MAX_UPLOAD_SIZE_BYTES = 10 * 1024 * 1024
+
 
 class DocumentParserService:
     @staticmethod
     async def parse_file(file: UploadFile) -> str:
         filename = file.filename.lower()
-        contents = await file.read()
+        contents = await file.read(MAX_UPLOAD_SIZE_BYTES + 1)
+        if len(contents) > MAX_UPLOAD_SIZE_BYTES:
+            raise HTTPException(
+                status_code=413,
+                detail="File exceeds the 10 MiB upload limit",
+            )
 
         if filename.endswith(".txt"):
             return contents.decode("utf-8", errors="ignore")
