@@ -214,7 +214,18 @@ if prompt := (
                     full_response = f"{answer}\n\n---\n**📚 Sources Used:**\n"
                     if citations:
                         for cit in citations:
-                            full_response += f"- *{cit['document_name']} (Chunk #{cit['chunk_index']})*\n"
+                            document_name = cit.get("document_name", "Unknown")
+                            chunk_index = cit.get("chunk_index", "?")
+                            excerpt = cit.get("content", "").strip()
+                            full_response += (
+                                f"- *{document_name} (Chunk #{chunk_index})*\n"
+                            )
+                            if excerpt:
+                                quoted_excerpt = "\n".join(
+                                    f"  > {line}"
+                                    for line in excerpt.splitlines()
+                                )
+                                full_response += f"{quoted_excerpt}\n"
                     else:
                         full_response += (
                             "- *No direct matches found in vector DB*\n"
