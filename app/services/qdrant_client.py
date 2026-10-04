@@ -16,6 +16,9 @@ class QdrantService:
         )
         self.collection_name = settings.QDRANT_COLLECTION_NAME
 
+    async def check_connection(self):
+        await self.client.get_collections()
+
     async def init_collection(self, vector_size: int = settings.VECTOR_SIZE):
         """Создает коллекцию в Qdrant, если она еще не существует."""
         try:
