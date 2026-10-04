@@ -1,9 +1,14 @@
-from typing import Any, Dict, List
-from pydantic import BaseModel, Field
+from typing import Annotated, Any, Dict, List
+from pydantic import BaseModel, Field, StringConstraints
+
+QueryText = Annotated[
+    str,
+    StringConstraints(strip_whitespace=True, min_length=1, max_length=2000),
+]
 
 
 class SearchQuery(BaseModel):
-    query: str = Field(..., description="Поисковый запрос")
+    query: QueryText = Field(..., description="Поисковый запрос")
     top_k: int = Field(default=5, ge=1, le=20, description="Количество чанков")
 
 
@@ -27,7 +32,7 @@ class Citation(BaseModel):
 
 
 class RAGQuery(BaseModel):
-    query: str = Field(..., description="Вопрос пользователя")
+    query: QueryText = Field(..., description="Вопрос пользователя")
     top_k: int = Field(default=3, ge=1, le=10)
 
 
