@@ -64,6 +64,9 @@ with st.sidebar:
     )
 
     if uploaded_file is not None:
+        st.caption(
+            f"{uploaded_file.name} · {uploaded_file.size / 1024:.1f} KB"
+        )
         if st.button(
             "🚀 Ingest Document", type="primary", use_container_width=True
         ):
