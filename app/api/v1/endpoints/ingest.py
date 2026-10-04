@@ -1,11 +1,17 @@
+from typing import List
 from fastapi import APIRouter, File, HTTPException, UploadFile
-from app.schemas.document import IngestResponse
+from app.schemas.document import DocumentSummary, IngestResponse
 from app.services.chunker import chunker_service
 from app.services.embedder import embedder_service
 from app.services.parser import parser_service
 from app.services.qdrant_client import qdrant_service
 
 router = APIRouter()
+
+
+@router.get("", response_model=List[DocumentSummary])
+async def list_documents():
+    return await qdrant_service.list_documents()
 
 
 @router.post("/ingest", response_model=IngestResponse)

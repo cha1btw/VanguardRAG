@@ -3,7 +3,7 @@ from typing import List
 from qdrant_client import AsyncQdrantClient
 from qdrant_client.http import models
 from app.config import settings
-from app.schemas.document import DocumentChunk
+from app.schemas.document import DocumentChunk, DocumentSummary
 
 logger = logging.getLogger(__name__)
 
@@ -81,6 +81,34 @@ class QdrantService:
                 ]
             ),
         )
+
+    async def list_documents(self) -> List[DocumentSummary]:
+        document_counts = {}
+        offset = None
+
+        while True:
+            points, next_offset = await self.client.scroll(
+                collection_name=self.collection_name,
+                limit=256,
+                offset=offset,
+                with_payload=["document_name"],
+                with_vectors=False,
+            )
+            for point in points:
+                document_name = (point.payload or {}).get("document_name")
+                if document_name:
+                    document_counts[document_name] = (
+                        document_counts.get(document_name, 0) + 1
+                    )
+
+            if next_offset is None:
+                break
+            offset = next_offset
+
+        return [
+            DocumentSummary(document_name=name, chunks_count=count)
+            for name, count in sorted(document_counts.items())
+        ]
 
     async def search_similar(
         self,

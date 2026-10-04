@@ -14,3 +14,8 @@ class IngestResponse(BaseModel):
     total_chunks: int
     status: str = "success"
     message: str
+
+
+class DocumentSummary(BaseModel):
+    document_name: str
+    chunks_count: int

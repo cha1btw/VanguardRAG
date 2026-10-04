@@ -55,6 +55,9 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
+if "documents" not in st.session_state:
+    st.session_state.documents = None
+
 # --- SIDEBAR (CONTROLS & UPLOAD) ---
 with st.sidebar:
     st.image(
@@ -110,6 +113,26 @@ with st.sidebar:
                         st.error(f"Error: {response.text}")
                 except Exception as e:
                     st.error(f"Backend connection failed: {e}")
+
+    if st.button("Refresh indexed documents", use_container_width=True):
+        try:
+            documents_response = requests.get(
+                API_URL, timeout=API_REQUEST_TIMEOUT
+            )
+            documents_response.raise_for_status()
+            st.session_state.documents = documents_response.json()
+        except requests.RequestException as error:
+            st.error(f"Could not load documents: {error}")
+
+    if st.session_state.documents is not None:
+        if st.session_state.documents:
+            for document in st.session_state.documents:
+                st.caption(
+                    f"{document['document_name']} · "
+                    f"{document['chunks_count']} chunks"
+                )
+        else:
+            st.caption("No documents indexed yet.")
 
     st.divider()
     if st.button("Check API connection", use_container_width=True):
