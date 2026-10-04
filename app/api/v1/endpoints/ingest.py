@@ -19,6 +19,7 @@ async def ingest_document(file: UploadFile = File(...)):
     chunks = chunker_service.split_text(text, filename=file.filename)
     texts_to_embed = [c.content for c in chunks]
     embeddings = await embedder_service.embed_documents(texts_to_embed)
+    await qdrant_service.delete_document(file.filename)
     await qdrant_service.upsert_chunks(chunks, embeddings)
 
     return IngestResponse(

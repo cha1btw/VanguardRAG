@@ -65,6 +65,20 @@ class QdrantService:
             points=points,
         )
 
+    async def delete_document(self, document_name: str):
+        """Remove all stored chunks for a document with this name."""
+        await self.client.delete(
+            collection_name=self.collection_name,
+            points_selector=models.Filter(
+                must=[
+                    models.FieldCondition(
+                        key="document_name",
+                        match=models.MatchValue(value=document_name),
+                    )
+                ]
+            ),
+        )
+
     async def search_similar(
         self, query_vector: List[float], limit: int = 5
     ) -> List[models.ScoredPoint]:
