@@ -83,7 +83,8 @@ with st.sidebar:
                     if response.status_code == 200:
                         data = response.json()
                         st.success(
-                            f"Success! Chunks added: {data.get('chunks_count')}"
+                            f"Added {data.get('total_chunks', 0)} chunks from "
+                            f"{data.get('filename', uploaded_file.name)}."
                         )
                     else:
                         st.error(f"Error: {response.text}")
