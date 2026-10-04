@@ -10,6 +10,7 @@ API_URL = os.getenv(
 API_BASE_URL = os.getenv(
     "API_BASE_URL", API_URL.split("/api/v1/")[0]
 ).rstrip("/")
+API_REQUEST_TIMEOUT = (5, 300)
 
 st.set_page_config(
     page_title="VanguardRAG — Local AI Assistant",
@@ -87,7 +88,11 @@ with st.sidebar:
                     )
                 }
                 try:
-                    response = requests.post(f"{API_URL}/ingest", files=files)
+                    response = requests.post(
+                        f"{API_URL}/ingest",
+                        files=files,
+                        timeout=API_REQUEST_TIMEOUT,
+                    )
                     if response.status_code == 200:
                         data = response.json()
                         st.success(
@@ -207,7 +212,11 @@ if prompt := (
             try:
                 payload = {"query": prompt, "top_k": top_k}
                 started_at = time.perf_counter()
-                response = requests.post(f"{API_URL}/generate", json=payload)
+                response = requests.post(
+                    f"{API_URL}/generate",
+                    json=payload,
+                    timeout=API_REQUEST_TIMEOUT,
+                )
                 elapsed_seconds = time.perf_counter() - started_at
 
                 if response.status_code == 200:
