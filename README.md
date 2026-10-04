@@ -48,7 +48,7 @@ docker compose up --build -d
 
  Key Features
 
-⚬	 Multi-Format Ingestion: Supports .txt, .pdf, and .docx document parsing with automated text chunking.
+⚬	 Multi-Format Ingestion: Supports .txt, .md, .pdf, and .docx document parsing with automated text chunking.
 ⚬	 100% Local Inference: Complete data privacy via local model execution using Ollama.
 ⚬	 Dynamic Context Control: Adjust the top_k chunk retrieval parameter directly from the sidebar UI.
 ⚬	 Source Citations: Every generated response includes reference links to the source document and chunk index.

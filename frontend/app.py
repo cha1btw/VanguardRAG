@@ -59,11 +59,11 @@ with st.sidebar:
 
     st.subheader("📁 Step 1: Knowledge Base")
     st.markdown(
-        "Upload text files, PDFs, or Word documents so the AI can reference them."
+        "Upload text, Markdown, PDF, or Word documents so the AI can reference them."
     )
 
     uploaded_file = st.file_uploader(
-        "Choose a file", type=["txt", "pdf", "docx"]
+        "Choose a file", type=["txt", "md", "pdf", "docx"]
     )
 
     if uploaded_file is not None:

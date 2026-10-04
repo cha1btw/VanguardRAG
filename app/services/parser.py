@@ -17,7 +17,7 @@ class DocumentParserService:
                 detail="File exceeds the 10 MiB upload limit",
             )
 
-        if filename.endswith(".txt"):
+        if filename.endswith((".txt", ".md")):
             return contents.decode("utf-8", errors="ignore")
 
         elif filename.endswith(".pdf"):
@@ -38,7 +38,7 @@ class DocumentParserService:
         else:
             raise HTTPException(
                 status_code=400,
-                detail=f"Неподдерживаемый формат файла: {file.filename}. Разрешены: .pdf, .docx, .txt",
+                detail=f"Неподдерживаемый формат файла: {file.filename}. Разрешены: .pdf, .docx, .txt, .md",
             )
 
 
