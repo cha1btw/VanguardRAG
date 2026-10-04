@@ -141,12 +141,28 @@ if not st.session_state.messages:
         st.markdown(
             "👋 Hello! I am ready. Upload a document in the left sidebar (or ask a general question) and I will help you analyze it."
         )
+    st.caption("Try a question")
+    starter_columns = st.columns(3)
+    starter_prompts = [
+        "Summarize the key points",
+        "What are the main risks?",
+        "List important dates",
+    ]
+    selected_prompt = None
+    for column, starter in zip(starter_columns, starter_prompts):
+        if column.button(starter, use_container_width=True):
+            selected_prompt = starter
+else:
+    selected_prompt = None
 
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
-if prompt := st.chat_input("Type your question about the documents..."):
+if prompt := (
+    st.chat_input("Type your question about the documents...")
+    or selected_prompt
+):
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
         st.markdown(prompt)
