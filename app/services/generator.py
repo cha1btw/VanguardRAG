@@ -28,6 +28,7 @@ class RAGGeneratorService:
                     document_name=doc_name,
                     chunk_index=chunk_idx,
                     content=content,
+                    score=point.score,
                 )
             )
 

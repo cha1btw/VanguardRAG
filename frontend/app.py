@@ -114,13 +114,20 @@ def load_documents():
         st.session_state.documents_error = f"Could not load documents: {error}"
 
 
+def format_citation_title(citation):
+    title = (
+        f"**{citation.get('document_name', 'Unknown')}** · "
+        f"chunk #{citation.get('chunk_index', '?')}"
+    )
+    if citation.get("score") is not None:
+        title += f" · relevance {citation['score']:.2f}"
+    return title
+
+
 def render_sources(citations):
     with st.expander(f"📚 Sources ({len(citations)})"):
         for citation in citations:
-            st.markdown(
-                f"**{citation.get('document_name', 'Unknown')}** · "
-                f"chunk #{citation.get('chunk_index', '?')}"
-            )
+            st.markdown(format_citation_title(citation))
             excerpt = citation.get("content", "").strip()
             if excerpt:
                 st.caption(excerpt)
@@ -142,8 +149,7 @@ def export_chat(messages):
         text = f"## {message['role'].capitalize()}\n\n{message['content']}"
         for citation in message.get("citations") or []:
             text += (
-                f"\n\n> **{citation.get('document_name', 'Unknown')}** "
-                f"(chunk #{citation.get('chunk_index', '?')}): "
+                f"\n\n> {format_citation_title(citation)}: "
                 f"{citation.get('content', '').strip()}"
             )
         parts.append(text)

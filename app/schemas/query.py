@@ -30,6 +30,9 @@ class Citation(BaseModel):
     document_name: str
     chunk_index: int
     content: str
+    score: float | None = Field(
+        default=None, description="Cosine similarity of the chunk to the query"
+    )
 
 
 class RAGQuery(BaseModel):
