@@ -4,63 +4,66 @@
 
 ---
 
-##  Architecture & Tech Stack
+## Architecture & Tech Stack
 
-The project runs on **Docker Compose** and consists of 4 isolated microservices:
+The project runs on **Docker Compose** and consists of 4 isolated services:
 
-* **Frontend**: `Streamlit` (interactive dashboard with document upload, session history, and UI controls).
+* **Frontend**: `Streamlit` (document upload, chat, sources, and search settings).
 * **Backend API**: `FastAPI` (REST endpoints, document chunking, orchestration between the vector DB and LLM).
-* **Vector Database**: `Qdrant` (high-performance semantic similarity search).
+* **Vector Database**: `Qdrant` (semantic similarity search).
 * **Local LLM & Embeddings**: `Ollama` running `llama3.2` for text generation and `nomic-embed-text` for vectorization.
 
 ---
 
-##  Quick Start
+## Quick Start
 
 ### Prerequisites
-* [Docker Desktop](https://www.docker.com/) installed and running.
-* Git installed.
+* [Docker Desktop](https://www.docker.com/) (Docker Compose 2.24+).
+* Git.
 
-### Setup Instructions
+### Setup
 
 1. Clone the repository:
    ```bash
-   git clone [https://github.com/cha1btw/VanguardRAG.git](https://github.com/cha1btw/VanguardRAG.git)
+   git clone https://github.com/cha1btw/VanguardRAG.git
    cd VanguardRAG
+   ```
 
+2. Start all services:
+   ```bash
+   docker compose up --build -d
+   ```
+
+3. Download the models into Ollama (first run only, about 2 GB):
+   ```bash
+   docker compose exec ollama ollama pull llama3.2
+   docker compose exec ollama ollama pull nomic-embed-text
+   ```
+
+4. Open the apps in your browser:
+   * Streamlit UI: http://localhost:8501
+   * FastAPI Swagger docs: http://localhost:8000/docs
+
+Configuration is optional. See `.env.example` for the available overrides.
 
 ---
 
-1.	Spin up the entire infrastructure:
+## Key Features
 
-docker compose up --build -d
-
-
-
----
-
-2.	Open the apps in your browser:
-
-⚬	Streamlit Frontend UI: http://localhost:8501
-⚬	FastAPI Swagger Docs: http://localhost:8000/docs
+* **Multi-format ingestion**: `.txt`, `.md`, `.pdf`, and `.docx` files with automated text chunking (10 MiB limit).
+* **100% local inference**: complete data privacy via local models running in Ollama.
+* **Dynamic context control**: tune the number of retrieved chunks and the minimum relevance from the sidebar.
+* **Source citations**: every answer lists the document and chunk it came from.
 
 ---
 
- Key Features
+## Repository Structure
 
-⚬	 Multi-Format Ingestion: Supports .txt, .md, .pdf, and .docx document parsing with automated text chunking.
-⚬	 100% Local Inference: Complete data privacy via local model execution using Ollama.
-⚬	 Dynamic Context Control: Adjust the top_k chunk retrieval parameter directly from the sidebar UI.
-⚬	 Source Citations: Every generated response includes reference links to the source document and chunk index.
-
-----
-
-
-Repository Structure
-
+```
 VanguardRAG/
 ├── app/                  # FastAPI backend (routers, services, schemas)
 ├── frontend/             # Streamlit application (UI logic, Dockerfile)
 ├── storage/              # Local data volumes for Qdrant & Ollama (git-ignored)
 ├── docker-compose.yml    # Multi-container orchestration config
-└── requirements.txt      # Python dependencies
+└── requirements.txt      # Backend Python dependencies
+```

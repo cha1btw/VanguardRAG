@@ -37,7 +37,8 @@ services:
     ports:
       - "8000:8000"
     env_file:
-      - .env
+      - path: .env
+        required: false
     environment:
       - QDRANT_HOST=qdrant
       - QDRANT_PORT=6333
@@ -45,3 +46,15 @@ services:
     depends_on:
       - qdrant
       - ollama
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: vanguard_frontend
+    restart: unless-stopped
+    ports:
+      - "8501:8501"
+    environment:
+      - API_URL=http://api:8000/api/v1/documents
+    depends_on:
+      - api
