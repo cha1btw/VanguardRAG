@@ -1,0 +1,13 @@
+[theme]
+base = "dark"
+primaryColor = "#3b82f6"
+backgroundColor = "#0e1117"
+secondaryBackgroundColor = "#161b26"
+textColor = "#e5e7eb"
+
+[server]
+# Keep in sync with MAX_UPLOAD_SIZE_BYTES in app.py so the uploader shows the real limit.
+maxUploadSize = 10
+
+[client]
+toolbarMode = "minimal"
