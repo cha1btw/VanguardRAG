@@ -52,6 +52,7 @@ Configuration is optional. See `.env.example` for the available overrides.
 
 * **Multi-format ingestion**: `.txt`, `.md`, `.pdf`, and `.docx` files with automated text chunking (10 MiB limit).
 * **100% local inference**: complete data privacy via local models running in Ollama.
+* **Knowledge base management**: see what is indexed and delete documents from the sidebar (with confirmation).
 * **Dynamic context control**: tune the number of retrieved chunks and the minimum relevance from the sidebar.
 * **Source citations**: every answer lists the document, the chunk, and its relevance score.
 

@@ -1,5 +1,6 @@
 import os
 import time
+from urllib.parse import quote
 
 import requests
 import streamlit as st
@@ -124,6 +125,21 @@ def format_citation_title(citation):
     return title
 
 
+def delete_document(document_name):
+    """Delete a document via the API. Returns an error message or None."""
+    try:
+        response = requests.delete(
+            f"{API_URL}/{quote(document_name, safe='')}",
+            timeout=API_REQUEST_TIMEOUT,
+        )
+    except requests.RequestException as error:
+        return f"Backend connection failed: {error}"
+    # 404 means it is already gone, which is the state the user wanted.
+    if response.ok or response.status_code == 404:
+        return None
+    return f"Delete failed: {describe_error(response)}"
+
+
 def render_sources(citations):
     with st.expander(f"📚 Sources ({len(citations)})"):
         for citation in citations:
@@ -162,6 +178,7 @@ for key, default in (
     ("messages", []),
     ("uploader_key", 0),
     ("flash", None),
+    ("pending_delete", None),
 ):
     if key not in st.session_state:
         st.session_state[key] = default
@@ -251,11 +268,45 @@ with st.sidebar:
     if st.session_state.documents_error:
         st.warning(st.session_state.documents_error)
     elif st.session_state.documents:
-        for document in st.session_state.documents:
-            st.caption(
-                f"📄 `{document['document_name']}` · "
-                f"{document['chunks_count']} chunks"
+        for index, document in enumerate(st.session_state.documents):
+            name_column, delete_column = st.columns(
+                [5, 1], vertical_alignment="center"
             )
+            name_column.caption(
+                f"📄 `{document['document_name']}` · "
+                f"{document['chunks_count']} "
+                f"chunk{'s' if document['chunks_count'] != 1 else ''}"
+            )
+            if delete_column.button(
+                "🗑️",
+                key=f"delete_{index}",
+                help=f"Delete {document['document_name']}",
+            ):
+                st.session_state.pending_delete = document["document_name"]
+
+        pending_delete = st.session_state.pending_delete
+        if pending_delete in [
+            d["document_name"] for d in st.session_state.documents
+        ]:
+            st.warning(
+                f"Delete `{pending_delete}` from the knowledge base? "
+                "This cannot be undone."
+            )
+            confirm_column, cancel_column = st.columns(2)
+            if confirm_column.button(
+                "Delete", type="primary", use_container_width=True
+            ):
+                error = delete_document(pending_delete)
+                if error:
+                    st.error(error)
+                else:
+                    st.session_state.flash = f"Deleted {pending_delete}."
+                    st.session_state.pending_delete = None
+                    st.session_state.documents = None
+                    st.rerun()
+            if cancel_column.button("Cancel", use_container_width=True):
+                st.session_state.pending_delete = None
+                st.rerun()
     else:
         st.caption("Nothing indexed yet. Upload a file to get started.")
 

@@ -16,6 +16,11 @@ class IngestResponse(BaseModel):
     message: str
 
 
+class DeleteResponse(BaseModel):
+    document_name: str
+    deleted_chunks: int
+
+
 class DocumentSummary(BaseModel):
     document_name: str
     chunks_count: int
