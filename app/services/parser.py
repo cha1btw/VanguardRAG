@@ -22,7 +22,15 @@ class DocumentParserService:
             )
 
         if filename.endswith((".txt", ".md")):
-            return contents.decode("utf-8", errors="ignore")
+            try:
+                # utf-8-sig also strips the BOM that Windows editors add.
+                return contents.decode("utf-8-sig")
+            except UnicodeDecodeError as error:
+                raise HTTPException(
+                    status_code=400,
+                    detail="Text files must be UTF-8 encoded. "
+                    "Re-save the file as UTF-8 and try again.",
+                ) from error
 
         elif filename.endswith(".pdf"):
             pdf_stream = io.BytesIO(contents)
