@@ -5,7 +5,6 @@ pydantic-settings==2.5.2
 qdrant-client==1.11.0
 langchain==0.3.0
 langchain-community==0.3.0
-langchain-openai==0.2.0
 pypdf==4.3.1
 python-docx==1.1.2
 python-multipart==0.0.9
