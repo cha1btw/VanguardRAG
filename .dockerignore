@@ -1,0 +1,11 @@
+# Keep secrets, local data and VCS metadata out of the API image.
+.env
+.git
+.gitignore
+venv/
+storage/
+frontend/
+__pycache__/
+*.pyc
+.DS_Store
+.playwright-mcp/
