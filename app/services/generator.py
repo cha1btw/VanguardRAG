@@ -1,7 +1,11 @@
+import logging
 from typing import List
 from langchain_community.chat_models import ChatOllama
 from app.config import settings
+from app.core.exceptions import OllamaUnavailableError
 from app.schemas.query import Citation, RAGResponse
+
+logger = logging.getLogger(__name__)
 
 
 class RAGGeneratorService:
@@ -50,7 +54,11 @@ class RAGGeneratorService:
             ("user", query),
         ]
 
-        response = await self.llm.ainvoke(messages)
+        try:
+            response = await self.llm.ainvoke(messages)
+        except Exception as error:
+            logger.exception("Ollama generation request failed")
+            raise OllamaUnavailableError from error
 
         return RAGResponse(
             query=query, answer=str(response.content), citations=citations
