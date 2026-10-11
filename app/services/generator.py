@@ -32,14 +32,17 @@ class RAGGeneratorService:
                 )
             )
 
-            context_str += f"\n--- Источник [{idx + 1}]: {doc_name} (Чанк #{chunk_idx}) ---\n{content}\n"
+            context_str += f"\n--- Source [{idx + 1}]: {doc_name} (Chunk #{chunk_idx}) ---\n{content}\n"
 
         system_prompt = (
-            "Ты — корпоративный ассистент VanguardRAG. Отвечай на вопрос пользователя, "
-            "опираясь СТРОГО на предоставленный ниже контекст. "
-            "Если ответа нет в контексте, честно скажи, что информация отсутствует в документах. "
-            "Всегда ссылайся на номера источников, откуда взята информация.\n\n"
-            f"Контекст:\n{context_str}"
+            "You are VanguardRAG, a corporate document assistant. Answer the "
+            "user's question relying STRICTLY on the context below. "
+            "If the answer is not in the context, say honestly that the "
+            "information is missing from the documents. "
+            "Always cite the numbers of the sources the information comes from. "
+            "Always answer in the same language as the user's question, "
+            "regardless of the language of the context.\n\n"
+            f"Context:\n{context_str}"
         )
 
         messages = [
