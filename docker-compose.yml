@@ -13,7 +13,8 @@ services:
       - QDRANT__SERVICE__HTTP_PORT=6333
       - QDRANT__SERVICE__GRPC_PORT=6334
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:6333/healthz"]
+      # The Qdrant image ships without curl/wget, so probe the port with bash.
+      test: ["CMD", "bash", "-c", ":> /dev/tcp/127.0.0.1/6333"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -44,8 +45,10 @@ services:
       - QDRANT_PORT=6333
       - OLLAMA_BASE_URL=http://ollama:11434
     depends_on:
-      - qdrant
-      - ollama
+      qdrant:
+        condition: service_healthy
+      ollama:
+        condition: service_started
 
   frontend:
     build:
